@@ -1,21 +1,15 @@
-# auto-motion-app-case-study
-Enterprise Post-Production Automation for IKEA IMC | React, Python, Electron.
-This structured overview is designed for a technical GitHub profile, focusing on your engineering contributions and the strategic architecture of the **Auto-Motion App**. It utilizes professional terminology and direct evidence from your technical logs and provided codebase.
-
----
-
-# 📘 Auto-Motion App: Post-Production Pipeline Automation
+# Auto-Motion: Motion Media Workflow Automation
 
 ## 🚀 Overview
 
-The **Auto-Motion App** (developed from the **IKEA MM Script App** prototype) is a cross-platform desktop utility built to standardize enterprise motion media workflows. By bridging high-fidelity UX with a functional automation backend, the tool eliminates repetitive manual setup and enforces global naming and metadata conventions across production teams.
+The **Auto-Motion App** (developed from the **IKEA MM Script App** prototype) is a cross-platform desktop utility built to standardize motion media workflows. By bridging high-fidelity UX with a functional automation backend, the tool eliminates repetitive manual setup and enforces global naming and metadata conventions across production teams.
 
 * 
 **Role:** Strategic Lead & Post-Production Script Developer.
 
 
 * 
-**Impact:** Developed a unified "Design-to-Code" pipeline, transitioning a Figma-based prototype into a functional Electron/React/Python application.
+**Impact:** Developed a unified "Design-to-Code" pipeline, transitioning a Figma prototype into a functional Electron/React/Python application.
 
 
 * 
@@ -31,10 +25,35 @@ The application utilizes a modular architecture to handle complex media processi
 
 ### 🔗 IPC & CLI Integration
 
-A key technical achievement was engineering the bridge between the **React** frontend and the **Python** automation engine. The application uses Electron’s **IPC (Inter-Process Communication)** to trigger specialized Python utility scripts.
+A key technical achievement was engineering the bridge between the **React** frontend and the **Python** automation engine using Electron’s **IPC (Inter-Process Communication)**.
 
-* **Process Spawning:** Utilizes `child_process.spawn` to execute Python CLI wrappers (e.g., `project_templates_cli.py`) in non-interactive modes.
-* **Asynchronous Handling:** IPC handlers manage asynchronous promises to return structured JSON data from the Python backend directly to the frontend state.
+```javascript
+// Electron IPC Handler for Python Script Spawning
+ipcMain.handle("listProjectTemplates", async () => {
+  return new Promise((resolve, reject) => {
+    const helperPath = path.resolve(app.getAppPath(), '../backend/src/scripts/utilities/project_templates_cli.py');
+    const py = spawn("python3", [helperPath, "--list", "--non-interactive"]);
+    let out = "", err = "";
+    py.stdout.on("data", (c) => (out += c));
+    py.stderr.on("data", (c) => (err += c));
+    py.on("close", (code) => {
+      if (code === 0) {
+        try {
+          resolve(JSON.parse(out)); // Return structured JSON to Frontend
+        } catch (e) {
+          reject(e);
+        }
+      } else {
+        reject(new Error(err || `exit code ${code}`));
+      }
+    });
+  });
+});
+
+```
+
+* **Process Spawning:** Utilizes `child_process.spawn` to execute Python CLI wrappers in non-interactive modes.
+* **Asynchronous Handling:** IPC handlers manage asynchronous promises to return structured JSON data from the Python backend to the frontend state.
 * **Security:** Implements `contextIsolation` and `sandbox: true` within Electron’s web preferences to secure the bridge between the renderer and native OS resources.
 
 ---
@@ -53,14 +72,14 @@ The app serves as a centralized hub for technical directors and editors to manag
 
 ### 2. Metadata & Scripting Engine
 
-* **Bulk Management:** Provides tools for importing, exporting, and resetting clip attributes via CSV and JSON configuration files.
-* **Automated Assembly:** The "Append Clips" tool uses metadata to automatically generate timestamped timelines and rough cuts, removing manual dragging and dropping from the edit process.
+* **Bulk Management:** Tools for importing, exporting, and resetting clip attributes via CSV and JSON configuration files.
+* **Automated Assembly:** The "Append Clips" tool uses metadata to automatically generate timestamped timelines and rough cuts, removing manual assembly from the edit process.
 
 ### 3. Native Desktop Integration
 
 * **System Tray Utility:** Built a resident system tray menu for quick access to specific production pages and tools.
 * 
-**Cross-Platform Performance:** Developed and tested for both macOS and Windows environments, handling native path resolutions for enterprise storage solutions.
+**Cross-Platform Performance:** Developed and tested for macOS and Windows, handling native path resolutions for enterprise storage solutions.
 
 
 
@@ -72,7 +91,10 @@ The app serves as a centralized hub for technical directors and editors to manag
 
 Initial discovery focused on proving the business case through UI/UX research.
 
-* **Systemic Design:** Integrated the **IKEA Skapa** design system into high-fidelity Figma prototypes to validate user flows for project initialization.
+* 
+**Systemic Design:** Integrated the **IKEA Skapa** design system into high-fidelity Figma prototypes to validate user flows for project initialization.
+
+
 * 
 **Requirements Gathering:** Conducted **WCAG accessibility** research and stakeholder demos to define the automation roadmap.
 
@@ -95,11 +117,23 @@ Transitioned the prototype into a production-ready system with deep API integrat
 
 ## 🛠️ Technical Skillset
 
-* **Languages:** Python (Automation, API Logic), JavaScript/TypeScript (React, Electron).
-* **Production APIs:** DaVinci Resolve Python API, Beräkna Render Farm API.
+* 
+**Languages:** Python (Automation, API Logic), JavaScript/TypeScript (React, Electron).
+
+
+* 
+**Production APIs:** DaVinci Resolve Python API, Beräkna Render Farm API.
+
+
 * 
 **Tools:** Figma (Prototyping), GitHub (Version Control), Jira/Confluence (Roadmapping & Documentation).
 
 
 * 
 **Design Systems:** IKEA Skapa.
+
+
+
+---
+
+**Footnote:** *This repository functions as a technical case study. The core codebase and internal IKEA Skapa components are proprietary and not included for public distribution.*
