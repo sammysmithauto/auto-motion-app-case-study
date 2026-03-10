@@ -112,6 +112,12 @@ Transitioned the prototype into a production-ready system with deep API integrat
 **Scalability:** Researched and integrated with **Beräkna** render-farm solutions for high-volume, remote media processing.
 
 
+---
+
+📖 Documentation
+For a deep dive into the application's features and technical requirements, please refer to the official documentation:
+
+Auto-Motion User Manual (PDF)
 
 ---
 
